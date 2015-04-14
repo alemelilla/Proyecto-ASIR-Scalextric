@@ -1,0 +1,33 @@
+/* Prueba simple del funcionamiento de una fotoresistencia
+----------------------------------------------------
+PhotoR 10K
++5 o---/\/\/--.--/\/\/---o GND
+              |
+Pin 0 o-------'
+----------------------------------------------------
+*/
+int lightPin = 0;	// Pin para la fotoresistencia
+int ledPin=9;		// Pin al que se conecta el LED
+
+void setup()
+{
+Serial.begin(9600);    		// Inicia la comunicacion serie
+pinMode( ledPin, OUTPUT ); 	// Establece el pin del LED
+                            // como salida
+}
+
+void loop()
+{
+// Primero leemos el valor que nos da la fotoresistecia
+// y lo mostramos por el puerto serie
+Serial.println(analogRead(lightPin));
+
+// Ahora cogemos la lectura de la fotoresistencia, la
+// dividimos por 4 y la mandamos como salida analogica
+// al LED
+analogWrite(ledPin, analogRead(lightPin)/4);
+
+// Hacemos una pequeña pausa para que el baile de
+// numeros en el puerto serie no sea mareante
+delay(100);
+}
