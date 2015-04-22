@@ -1,0 +1,51 @@
+/*
+Prueba mk1 de usar lcd como display para el numero de vueltas,
+Mas adelante, tambien servira como display para el tiempo de vuelta
+
+esto no es definitivo en cuanto que llevara una interfaz grafica mas adelante
+
+Hay que aclarar que la pantalla lleva un conector I2C, por l oque la salida se ve reducida solo a 4 cables frente a 
+los 16 que llevaria de no llevarlo, por lo tanto, el conector hace una multiplexacion.
+
+Para este efecto se ha descargado la libreria "LiquidCrystal_I2C" desde el post de arduino del siguiente enlace
+http://forum.arduino.cc/index.php?topic=253332.0
+la carga de la libreria en el compilador se ha realizado mediante la subida al compilador del archivo zip
+
+*/
+
+
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+
+int sensor = 0;           // pin sensor ldr pista
+int led = 11;             // pin led de control
+int vuelta = 0;           // numero de vuelta
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+
+
+void setup() {
+  
+  Serial.begin(9600);     // inicia el terminal serie del compilador
+  pinMode( led, OUTPUT);  // señala al led como salida
+  lcd.begin();            // se inicializa sin parametros al haber sido declarados en la variable
+  
+  }
+  
+void loop () {
+  
+  Serial.println(analogRead(sensor));
+  
+  if (analogRead(sensor) < 15) {
+    analogWrite(led, analogRead(sensor)/20);
+    vuelta = vuelta + 1;
+    delay(1500);
+}
+  
+  lcd.setCursor(1,1);
+  lcd.print(vuelta);
+  
+  delay(50);
+  
+}
