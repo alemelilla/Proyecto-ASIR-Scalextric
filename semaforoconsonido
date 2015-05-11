@@ -1,0 +1,66 @@
+//semaforo 
+
+int rojo1 =  34; //Pin led rojo 1
+int rojo2 =  38; //Pin led rojo 2
+int rojo3 =  42; //Pin led rojo 3
+int verde =  46; //Pin led verde
+int buzzer = 22; //Pin del buzer
+int boton = 28;  //Pin del boton)
+int doh=261.63;
+int sol=392;
+int val = 0;     // variable que da el estado
+int intervalo =  1000; //Intervalo de la secuencia
+int intervalo2 =  500; //Intervalo de la secuencia
+
+
+
+
+void setup()    {
+ 
+ pinMode(rojo1, OUTPUT);
+ pinMode(rojo2, OUTPUT);
+ pinMode(rojo3, OUTPUT);
+ pinMode(verde, OUTPUT);
+ pinMode(buzzer, OUTPUT);
+ pinMode(boton, INPUT);    // declarar el boton tipo input
+ 
+}
+
+void loop()  {
+  
+   val = digitalRead(boton);  // lee ell valor de la variable val
+   if (val == HIGH) {         // condcion para los led
+   
+   digitalWrite(rojo1, LOW); //Apaga los leds rojos
+   digitalWrite(rojo2, LOW);
+   digitalWrite(rojo3, LOW);
+   digitalWrite(verde, LOW);  //Apaga verde
+   
+   
+   
+   
+    } else {
+   
+   digitalWrite(rojo1, HIGH); //Encendido de los rojos
+   tone(buzzer, doh, intervalo2);
+   delay(intervalo);
+   digitalWrite(rojo2, HIGH);
+   tone(buzzer, doh, intervalo2);
+   delay(intervalo);
+   digitalWrite(rojo3, HIGH);
+   tone(buzzer, doh, intervalo2);
+   delay(intervalo);
+    
+   digitalWrite(rojo1, LOW); //Apaga los leds rojos
+   digitalWrite(rojo2, LOW);
+   digitalWrite(rojo3, LOW);
+   digitalWrite(verde, HIGH); // Enciende el verde
+   tone(buzzer, sol, intervalo*2);
+   delay(intervalo*2);
+   digitalWrite(verde, LOW);  //Apaga verde
+      
+   }
+ }
+ 
+ 
+  
