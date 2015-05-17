@@ -1,0 +1,39 @@
+/******************************************************************
+
+  Alejandro Dominguez Al-lal
+  Proyecto final ciclo ASIR
+
+  lector-mk1
+
+  prueba lectura salida reductor de voltaje
+
+  para esta prueba probaremos si la arduino es capaz de reconocer la
+  variacion de voltaje del circuito reductor.
+
+  en este ejemplo la reduccion de voltaje sera de 5 voltios a 3.3,
+  estando el reductor conectado a un potenciometro analogico para
+  las variaciones de voltaje.
+
+******************************************************************/
+
+int lector = 0;
+int sensor = 1;
+int lectura;
+
+void setup() {
+
+  Serial.begin(9600);
+
+}
+
+void loop() {
+    lectura = analogRead(sensor);
+
+  if (lectura <= 5)
+  {
+    Serial.println(analogRead(sensor));
+    Serial.println(analogRead(lector));
+    delay(100);
+  }
+  delay(100);
+}
