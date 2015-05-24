@@ -1,0 +1,44 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+ LiquidCrystal_I2C lcd(0x27,16,2);
+ 
+int boton = 39;
+int boton2 = 37;
+int vuelta = 0;
+int ok = 0;
+int val = 0;     // variable que da el estado
+ 
+ void setup() {
+  lcd.backlight();
+  lcd.begin(); 
+  lcd.print("Menu");
+  pinMode(boton, INPUT);    // declarar el boton tipo input
+}
+
+void loop () {
+  
+  val = digitalRead(boton);  // lee ell valor de la variable val
+  if (val == HIGH) {         // condcion para los led
+  lcd.setCursor(1,1);
+  lcd.print(vuelta);
+ 
+  } else {
+  vuelta = vuelta + 1;
+  delay(500);
+  lcd.setCursor(1,1);
+  lcd.print(vuelta); 
+ } 
+ { 
+  val = digitalRead(boton2);  // lee ell valor de la variable val
+      if (val == HIGH) {         // condcion para los led
+      lcd.setCursor(1,1);
+      lcd.print(vuelta);
+ 
+  } else {
+      vuelta = vuelta - 1;
+      delay(500);
+      lcd.setCursor(1,1);
+      lcd.print(vuelta); 
+    }
+   }
+}
