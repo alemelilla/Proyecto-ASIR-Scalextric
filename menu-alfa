@@ -4,6 +4,7 @@
  
 int boton = 39;
 int boton2 = 37;
+int boton3 = 41;
 int vuelta = 0;
 int ok = 0;
 int val = 0;     // variable que da el estado
@@ -11,12 +12,33 @@ int val = 0;     // variable que da el estado
  void setup() {
   lcd.backlight();
   lcd.begin(); 
-  lcd.print("Menu");
+  lcd.print("Seleccione numero de vueltas");
+  delay(500);
   pinMode(boton, INPUT);    // declarar el boton tipo input
 }
 
 void loop () {
   
+  for (int positionCounter = 0; positionCounter < 13; positionCounter++) {
+    // scroll one position left:
+    lcd.scrollDisplayLeft(); 
+    // wait a bit:
+    delay(500);
+  }
+
+  // scroll 29 positions (string length + display length) to the right
+  // to move it offscreen right:
+  for (int positionCounter = 0; positionCounter < 13; positionCounter++) {
+    // scroll one position right:
+    lcd.scrollDisplayRight(); 
+    // wait a bit:
+    delay(500);
+  }
+  
+  // delay at the end of the full loop:
+  delay(1000);
+
+  while(ok < 1){
   val = digitalRead(boton);  // lee ell valor de la variable val
   if (val == HIGH) {         // condcion para los led
   lcd.setCursor(1,1);
@@ -41,4 +63,24 @@ void loop () {
       lcd.print(vuelta); 
     }
    }
+   { 
+  val = digitalRead(boton3);  // lee ell valor de la variable val
+      if (val == HIGH) {         // condcion para los led
+      lcd.setCursor(1,1);
+      lcd.print(vuelta);
+ 
+  } else {
+      ok = ok + 1;
+      delay(500);
+      lcd.setCursor(1,1);
+      lcd.print(ok); 
+    }
+   }
+  } 
+  while(ok >= 1){
+    lcd.clear();
+    lcd.setCursor(1,1);
+    lcd.print("Comenzando Carrera");
+    delay(500);
+    }
 }
