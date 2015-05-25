@@ -20,22 +20,20 @@ int val = 0;     // variable que da el estado
 void loop () {
   
   for (int positionCounter = 0; positionCounter < 13; positionCounter++) {
-    // scroll one position left:
+    // scroll hacia la izquierda :
     lcd.scrollDisplayLeft(); 
     // wait a bit:
     delay(500);
   }
 
-  // scroll 29 positions (string length + display length) to the right
-  // to move it offscreen right:
   for (int positionCounter = 0; positionCounter < 13; positionCounter++) {
-    // scroll one position right:
+    // scroll hacia la derecha:
     lcd.scrollDisplayRight(); 
-    // wait a bit:
+    // retardo de 500:
     delay(500);
   }
   
-  // delay at the end of the full loop:
+  // retardo de 1000:
   delay(1000);
 
   while(ok < 1){
