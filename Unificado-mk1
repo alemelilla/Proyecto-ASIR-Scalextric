@@ -1,0 +1,185 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+
+int sensor = 0;           // pin sensor ldr pista
+int vuelta = 0;           // numero de vuelta
+
+int rojo1 =  48; //Pin led rojo 1
+int rojo2 =  46; //Pin led rojo 2
+int rojo3 =  36; //Pin led rojo 3
+int verde =  34; //Pin led verde
+int buzzer = 22; //Pin del buzer
+int boton = 28;  //Pin del boton)
+int doh=261.63;
+int sol=392;
+int val = 0;     // variable que da el estado
+int intervalo =  1000; //Intervalo de la secuencia
+int intervalo2 =  500; //Intervalo de la secuencia
+int rele = 42;
+
+int lector = 1;
+int sensor = 2;
+int lectura;
+
+int m, mu=0,md=0;                          //Declaramos las variables que vamos a usar
+int s, su=0,sd=0;
+int l, lu=0,ld=0,lc=0;
+int pulsador,antes,despues;
+long int tiempo,inicio;
+int buzzer = 22;
+int doh=261.63;
+int intervalo = 200;
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+
+
+
+void setup() {
+  
+ pinMode(rojo1, OUTPUT);
+ pinMode(rojo2, OUTPUT);
+ pinMode(rojo3, OUTPUT);
+ pinMode(verde, OUTPUT);
+ pinMode(buzzer, OUTPUT);
+ pinMode(boton, INPUT);    // declarar el boton tipo input
+ pinMode(rele, OUTPUT);
+ Serial.begin(9600);     // inicia el terminal serie del compilador
+ lcd.begin();            // se inicializa sin parametros al haber sido declarados en la variable
+ 
+ lcd.print("___Cronometro___");          //Imprimimos "___Cronometro__"
+ lcd.setCursor(4, 1);                    //Situamos el comienzo de la siguiente impresion de datos en el caracter 5
+ lcd.print("00:00:000");  
+  
+ pinMode(28, INPUT);                     //Ponemos el pin 28 como entrada para el Sensor START/STOP
+ pinMode(28, INPUT);                     //Ponemos el pin 28 como entrada para el Pulsador RESET
+ pinMode(22, OUTPUT);                       //Pin del buzer0
+ antes=HIGH;                             //Ponemos la variable antes a HIGH
+ despues=HIGH;       
+ 
+ 
+}
+
+void loop() {
+
+  // SEMAFORO
+  
+   val = digitalRead(boton);  // lee ell valor de la variable val
+   if (val == HIGH) {         // condcion para los led
+   
+   digitalWrite(rojo1, LOW); //Apaga los leds rojos
+   digitalWrite(rojo2, LOW);
+   digitalWrite(rojo3, LOW);
+   digitalWrite(verde, LOW);  //Apaga verde
+   
+    } else {
+   
+   digitalWrite(rojo1, HIGH); //Encendido de los rojos
+   tone(buzzer, doh, intervalo2); //Enciende el buzzer
+   delay(intervalo);
+   digitalWrite(rojo2, HIGH);
+   tone(buzzer, doh, intervalo2);
+   delay(intervalo);
+   digitalWrite(rojo3, HIGH);
+   tone(buzzer, doh, intervalo2);
+   delay(intervalo);
+    
+   digitalWrite(rojo1, LOW); //Apaga los leds rojos
+   digitalWrite(rojo2, LOW);
+   digitalWrite(rojo3, LOW);
+   digitalWrite(verde, HIGH); // Enciende el verde
+   digitalWrite(rele,  HIGH); // Enciende el rele
+   tone(buzzer, sol, intervalo*2);
+   delay(intervalo*2);
+   digitalWrite(verde, LOW);  //Apaga verde
+      
+   }
+   
+   // CUentavueltas
+   
+   Serial.println(analogRead(sensor));
+  
+  if (analogRead(sensor) < 15) {
+    vuelta = vuelta + 1;
+    delay(1500);
+}
+  
+  lcd.setCursor(1,1);
+  lcd.print(vuelta);
+  
+  delay(25);
+  
+  //Lector
+  
+      lectura = analogRead(sensor);
+
+  if (lectura <= 5)
+  {
+    Serial.println(analogRead(sensor));
+    Serial.println(analogRead(lector));
+    delay(100);
+  }
+  delay(100);
+  
+  
+  if(digitalRead(28)==LOW){                 //Si el pin 28 esta LOW
+    tone(22, doh, intervalo);
+    lcd.setCursor(4, 1);                  //Nos ponemos en el LCD en la segunda linea caracter 5
+    lcd.print("00:00:000");               //Escribimos 00:00:000 (Ponemos el cronometro a 0)
+    delay(100);                           //Establecemos un retardo de 200ms
+  }
+despues=digitalRead(28);                  //Guardamos en la variable despues el valor del pin6 (sensor start/stop)
+  if(despues==LOW&&antes==HIGH){          //Si el valor que tenia era HIGH y ahora tiene LOW sera porque lo hemos activado
+    tone(22, doh, intervalo);
+    inicio=millis();                      //Guardamos en inicio el tiempo que se lleva ejecutando el programa hasta que
+                                          //se activa el sensor start/stop
+    antes=despues;                        //cambiamos el valor de la variable antes al que tiene la variable despues
+    pulsador=0;                            //Ponemos la variable pulsador a 0
+    //delay(200);                           //Establecemos un retardo de 200ms
+     
+    while(pulsador==0){                  //Cuando la variable pulsador sea 0
+      tiempo=millis()-inicio;            //Calculamos el tiempo que paso desde que se activo el sensor start/stop
+       
+      m=(tiempo/1000)/60;                 //Calculamos los minutos
+      mu=m%10;                            //Descomponemos los minutos y sacamos el valor de las unidades
+      md=(m-mu)/10;                       //Descomponemos los minutos y sacamos el valor de las decenas
+      
+       
+      s=(tiempo/1000)%60;                 //Calculamos los segundos
+      su=s%10;                            //Descomponemos los segundos y sacamos el valor de las unidades
+      sd=(s-su)/10;                       //Descomponemos los segundos y sacamos el valor de las decenas
+       
+      l=(tiempo%1000);                    //Calculamos las milesimas de segundo
+      lu=l%10;                            //Descomponemos las milesimas y sacamos el valor de las unidades
+      ld=((l-lu)/10)%10;                  //Descomponemos las milesimas y sacamos el valor de las decenas
+      lc=(l-(ld*10)-lu)/100;              //Descomponemos las milesimas y sacamos el valor de las centenas
+       
+      lcd.setCursor(4, 1);                //Ponemos el cursor en la linea 2 y el caracter 5
+      lcd.print(md);                      //Imprimimos los valores en el display
+      lcd.print(mu);              
+      lcd.print(":");
+      lcd.print(sd);
+      lcd.print(su);
+      lcd.print(":");
+      lcd.print(lc);
+      lcd.print(ld);
+      lcd.print(lu);
+ 
+      despues=digitalRead(28);      //Guardamos en la variable despues el valor del pin6 (sensor start/stop)
+      digitalWrite(22,0);
+      if(despues==LOW&&antes==HIGH){      //Si el valor que tenia era HIGH y ahora tiene LOW sera porque hemos activado
+                                          //el sensor
+       tone(22, doh, intervalo);
+        antes=despues;                    //cambiamos el valor de la variable antes al que tiene la variable después
+        pulsador=1;                       //Ponemos la variable pulsador a 1
+        delay(200);                       //Establecemos un retardo de 200ms
+        digitalWrite(22,0);
+     }
+      antes=despues;                      //cambiamos el valor de la variable antes al que tiene la variable despues
+    }
+  }
+  antes=despues;    
+  
+ 
+}
