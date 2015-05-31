@@ -1,0 +1,69 @@
+int EN1 = 12;
+int IN1 = 33;
+int IN2 = 32;
+
+int sensor1 = 1;
+int sensor2 = 2;
+int sensor3 = 3;
+int sensor4 = 4;
+
+boolean activo1 = true;
+boolean activo2 = false;
+
+void setup (){
+  pinMode(EN1, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  Serial.begin(9600); 
+  activo1 = true;
+  activo2 = false;  
+
+}
+
+void loop() {
+  Serial.print(analogRead(sensor1));
+  delay(100);
+  
+  if (analogRead(sensor1) < 15){
+    activo1 == true;
+    activo2 == false;
+    
+    if (activo1 = true){
+      digitalWrite(IN1,LOW);
+      digitalWrite(IN2,HIGH);
+      analogWrite(EN1,255);
+    }
+  }
+  
+  if (analogRead(sensor2) < 15){
+    activo2 == true;
+    activo1 == false;
+    if (activo1 = true){
+      digitalWrite(IN1,LOW);
+      digitalWrite(IN2,HIGH);
+      analogWrite(EN1,35);
+    }
+  }
+  
+  if (analogRead(sensor3) < 15){
+    activo1 == true;
+    activo2 == false;
+    
+    if (activo1 = true){
+      digitalWrite(IN1,LOW);
+      digitalWrite(IN2,HIGH);
+      analogWrite(EN1,255);
+    }
+  }
+  
+  if (analogRead(sensor1) < 15){
+    activo1 == true;
+    activo2 == false;
+    
+    if (activo1 = true){
+      digitalWrite(IN1,LOW);
+      digitalWrite(IN2,HIGH);
+      analogWrite(EN1,255);
+    }
+  }
+}
