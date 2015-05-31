@@ -344,6 +344,8 @@ if (analogRead(sensor1) < 15){
     }
   }
 }
-  
+ if (vuelta == nvuelta){
+  digitalWrite(rele, LOW);
+  } 
 }
 }
