@@ -1,0 +1,257 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27,16,2);
+ 
+int boton1 = 39;
+int boton2 = 37;
+int boton3 = 41;
+int boton4 = 35;
+int nvuelta = 0;
+int ok = 0;
+int val = 0;     // variable que da el estado
+
+
+int rojo1 =  52; //Pin led rojo 1
+int rojo2 =  53; //Pin led rojo 2
+int rojo3 =  50; //Pin led rojo 3
+int verde =  51; //Pin led verde
+int buzzer = 47; //Pin del buzer
+int doh=261.63;
+int sol=392;
+int intervalo =  1000; //Intervalo de la secuencia
+int intervalo2 =  500; //Intervalo de la secuencia
+int rele = 42;
+boolean inicio = false;
+
+//variables
+const byte lightPin = 0;  
+int lightSensor = 0;
+unsigned long lapMillis = 0;
+unsigned long startMillis = millis();
+unsigned long bestMillis = 9999999;
+float lapTime = 0.00;
+float bestLap = 0.00;
+boolean firstTrigger = true;
+boolean newBest = false;
+int vuelta = 0;
+
+//reproductor
+int EN1 = 12;
+int IN1 = 33;
+int IN2 = 32;
+
+
+ void setup() {
+  lcd.backlight();
+  lcd.begin();
+  lcd.print("Gestor de");
+  lcd.setCursor(1,1);
+  lcd.print("Carrera");
+  delay(2000); 
+  pinMode(rojo1, OUTPUT);
+ pinMode(rojo2, OUTPUT);
+ pinMode(rojo3, OUTPUT);
+ pinMode(verde, OUTPUT);
+ pinMode(buzzer, OUTPUT);
+ pinMode(rele, OUTPUT);
+     Serial.begin(9600); 
+
+}
+
+void loop () {
+  
+//******************Marquesina del Menu*****************************
+  lcd.clear();
+  lcd.setCursor(1,0);
+  lcd.print("Seleccione numero de vueltas");
+  delay(500);
+  for (int positionCounter = 0; positionCounter < 13; positionCounter++) {
+    lcd.scrollDisplayLeft(); 
+    delay(500);
+  }
+  for (int positionCounter = 0; positionCounter < 13; positionCounter++) {
+    lcd.scrollDisplayRight(); 
+    delay(500);
+  }
+  delay(1000);  
+      
+//******************Boton para sumar*****************************
+  while(ok < 1){     
+    val = digitalRead(boton1);  // lee ell valor de la variable val
+    if (val == HIGH) {         // condcion para los led
+      lcd.clear();
+      lcd.setCursor(1,1);
+      lcd.print(nvuelta);
+    
+  } else {
+    nvuelta = nvuelta + 1;
+    delay(100);
+    lcd.clear();
+    lcd.setCursor(1,1);
+    lcd.print(nvuelta);
+     
+ } 
+ 
+//******************Boton para restar***************************** 
+  val = digitalRead(boton2);  // lee ell valor de la variable val
+      if (val == HIGH) {         // condcion para los led
+      delay(50);
+      lcd.clear();
+      lcd.setCursor(1,1);
+      lcd.print(nvuelta);
+      
+  } else {
+      nvuelta = nvuelta - 1;
+      delay(100);
+      lcd.clear();
+      lcd.setCursor(1,1);
+      lcd.print(nvuelta);
+      
+    }
+//******************Boton Ok**************************************    
+
+  val = digitalRead(boton3);  // lee ell valor de la variable val
+      if (val == HIGH) {         // condcion para los led
+      delay(50);
+      lcd.clear();
+      
+  } else {
+      ok = ok + 1;
+      delay(50);
+      lcd.clear();   
+    }
+  }  
+    
+//******************Activar circuito********************************* 
+while(ok >= 1){
+val = digitalRead(boton3);  // lee ell valor de la variable val
+    if (val == HIGH) {         // condcion para los led
+    
+    }else{
+    lcd.clear();
+    lcd.setCursor(1,0);
+    lcd.print("Comenzando");
+    lcd.setCursor(1,1);
+    lcd.print("Carrera");
+    delay(100);
+    
+     digitalWrite(rojo1, HIGH); //Encendido de los rojos
+     tone(buzzer, doh, intervalo2); //Enciende el buzzer
+     delay(intervalo);
+     digitalWrite(rojo2, HIGH);
+     tone(buzzer, doh, intervalo2);
+     delay(intervalo);
+     digitalWrite(rojo3, HIGH);
+     tone(buzzer, doh, intervalo2);
+     delay(intervalo);
+    
+     digitalWrite(rojo1, LOW); //Apaga los leds rojos
+     digitalWrite(rojo2, LOW);
+     digitalWrite(rojo3, LOW);
+     digitalWrite(verde, HIGH); // Enciende el verde
+     digitalWrite(rele,  HIGH); // Enciende el rele
+     
+     lcd.clear();
+     lcd.setCursor(1,1);
+     lcd.print("Start!");
+     
+     tone(buzzer, sol, intervalo*2);
+     delay(intervalo*2);
+     digitalWrite(verde, LOW);  //Apaga verde      
+     inicio = true;
+   }
+   
+  //**********************Boton de atras*******************************    
+    val = digitalRead(boton4);  // lee ell valor de la variable val
+      if (val == HIGH) {         // condcion para los led
+      delay(50);
+      lcd.clear();
+      
+  } else   {
+      ok = ok - 1;
+      delay(50);
+      lcd.clear();
+       nvuelta = 0;
+      
+    }
+//*****************************************************************
+ 
+ 
+ 
+ 
+ 
+ if (inicio = true) {
+ lcd.setCursor(0, 0);
+ lcd.print("Last: ");
+ lcd.print(lapTime);
+ lcd.print("   ");   
+ lcd.setCursor(13,0);
+ lcd.print("Lap");
+ lcd.setCursor(14,1);
+ lcd.print(vuelta);
+  lcd.setCursor(0, 1);
+      lcd.print("Best: ");
+      lcd.print(bestLap);
+      lcd.print("   ");
+      newBest = true; 
+      
+   
+     //Si detecta el coche
+  if(analogRead(lightSensor) < 15){
+    
+    //Determina el tiempo de la vuelta en miliseguindos
+    lapMillis = millis() - startMillis;
+    startMillis = millis();
+    
+    lapTime = lapMillis / 1000.00;
+    
+    //Si es el primer paso, imprime "race started"
+    if (firstTrigger == true){
+      lcd.setCursor(0, 0);
+      lcd.print("Race Started!    ");
+    }
+    
+    //print if not first trigger
+    if (firstTrigger != true){
+      
+
+      Serial.print("lapTime: ");
+      Serial.println(lapTime);
+      Serial.print("lapMillis: ");
+      Serial.println(lapMillis);
+      //print lap time
+      lcd.setCursor(0, 0);
+      lcd.print("Last: ");
+      lcd.print(lapTime);
+      lcd.print("   ");   
+      lcd.setCursor(13,0);
+      lcd.print("Lap");
+      lcd.setCursor(14,1);
+      lcd.print(vuelta);
+      
+        vuelta= vuelta+1;
+
+    }
+   
+        
+    //if last lap is better than best lap
+    if(lapMillis < bestMillis && firstTrigger != true)
+    {
+      bestMillis = lapMillis;
+      bestLap = lapTime;
+      Serial.print("bestLap: ");
+      Serial.println(bestLap);
+      //print best lap time
+      lcd.setCursor(0, 1);
+      lcd.print("Best: ");
+      lcd.print(bestLap);
+      lcd.print("   ");
+      newBest = true;
+    }
+    firstTrigger = false;
+    Serial.println("----------------"); 
+
+  }
+  } 
+ }
+}
